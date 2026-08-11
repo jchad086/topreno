@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" role="img" aria-label="TOP Reno">
+  <title>TOP Reno</title>
+  <path d="M4.5 14.5 L16 4 L27.5 14.5" stroke="#FF5A1F" stroke-width="4.5" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M4.5 27 L16 16.5 L27.5 27" stroke="currentColor" stroke-width="4.5" stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>
