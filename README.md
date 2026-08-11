@@ -136,6 +136,33 @@ Already in place:
 
 ---
 
+## Accessibility
+
+Text colour meets **WCAG 2.1 AA** contrast (4.5:1 normal, 3:1 large) on every
+page, verified at 1440px and 375px with all scroll-reveals forced visible and
+all FAQ accordions expanded. Focus rings clear the 3:1 non-text minimum against
+the surface behind them.
+
+Colour is handled through three inherited roles rather than per-component
+values, so a component doesn't need to know which background it landed on:
+
+| Role | Light surfaces | Dark surfaces |
+|------|----------------|---------------|
+| `--accent-text` | `--orange-ink` `#C2410C` | `--orange` `#FF5A1F` |
+| `--lead-text` | `--steel-2` | `--smoke-2` |
+| `--muted-text` | `--muted` `#5E6672` | `--smoke` |
+
+Dark sections re-point all three in one rule (search `Every dark surface` in
+`style.css`). **If you add a section with a dark background, add its class to
+that selector** — otherwise it inherits the light-surface defaults, which are
+near-black and will vanish.
+
+Brand orange `#FF5A1F` is only 3.1:1 on light backgrounds, so it is used there
+for fills, borders, and decorative icons — never for text. Primary buttons use
+dark text on orange (6.2:1); white on orange would be 3.1:1 and fail.
+
+---
+
 ## Optional generators
 
 Both are conveniences, not part of a build. The generated output is committed,

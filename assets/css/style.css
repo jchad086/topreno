@@ -29,6 +29,21 @@
   --green:      #22C55E;
   --red:        #EF4444;
 
+  /* Accessible text colours.
+     #FF5A1F only reaches 3.1:1 on light surfaces, so orange *text* on paper or
+     white uses --orange-ink instead. The brand orange is still used at full
+     strength for fills and for text on dark surfaces, where it clears 6:1. */
+  --orange-ink: #C2410C;  /* 4.7:1 on --paper, 5.2:1 on white */
+  --muted:      #5E6672;  /* secondary text on light surfaces, 5.3:1 */
+  --step-num:   #5A616B;  /* large numerals on --ink, 3.3:1 */
+  --index-num:  #8A867C;  /* large numerals on --paper, 3.3:1 */
+
+  /* Surface-aware roles. Dark sections re-point these below, so a component
+     never has to know which background it landed on. */
+  --accent-text: var(--orange-ink);
+  --lead-text:   var(--steel-2);
+  --muted-text:  var(--muted);
+
   /* Type */
   --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
   --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -108,7 +123,10 @@ li { margin-bottom: 0.4em; }
 strong { font-weight: 700; }
 
 :focus-visible {
-  outline: 3px solid var(--orange);
+  /* --accent-text is inherited, so the ring darkens on light surfaces and stays
+     bright on dark ones — 4.7:1 and 6.2:1, both clearing the 3:1 minimum for
+     focus indicators. Plain --orange was only 2.8:1 on --paper. */
+  outline: 3px solid var(--accent-text);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -131,13 +149,23 @@ strong { font-weight: 700; }
 .steel { background: var(--steel); color: var(--paper); }
 .steel h2, .steel h3 { color: var(--white); }
 
+/* Every dark surface, whether it uses the .dark/.steel utilities or paints its
+   own background. Re-pointing the roles here is what keeps text legible — the
+   light-surface defaults are near-black and vanish on these. */
+.dark, .steel, .hero, .page-hero, .cta-band, .err-page,
+.stat-band, .process, .site-header, .site-footer, .card-dark, .faq {
+  --accent-text: var(--orange);
+  --lead-text:   var(--smoke-2);
+  --muted-text:  var(--smoke);
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
   z-index: 999;
   background: var(--orange);
-  color: var(--white);
+  color: var(--ink);
   padding: 0.75rem 1.25rem;
   font-weight: 700;
 }
@@ -181,28 +209,27 @@ strong { font-weight: 700; }
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--accent-text);
   margin-bottom: 1.25rem;
 }
 .eyebrow::before {
   content: '';
   width: 28px;
   height: 2px;
-  background: var(--orange);
+  background: var(--accent-text);
   flex: none;
 }
-.eyebrow-plain { color: var(--smoke); }
-.eyebrow-plain::before { background: var(--smoke); }
+.eyebrow-plain { color: var(--muted-text); }
+.eyebrow-plain::before { background: var(--muted-text); }
 
 .lead {
   font-size: var(--fs-lead);
   line-height: 1.55;
-  color: var(--steel-2);
+  color: var(--lead-text);
   max-width: 62ch;
 }
-.dark .lead, .steel .lead { color: var(--smoke-2); }
 
-.accent { color: var(--orange); }
+.accent { color: var(--accent-text); }
 
 /* --- Buttons ------------------------------------------------------------ */
 .btn {
@@ -228,7 +255,7 @@ strong { font-weight: 700; }
 
 .btn-primary {
   background: var(--orange);
-  color: var(--white);
+  color: var(--ink);   /* 6.2:1 on --orange; white would only be 3.1:1 */
   border-color: var(--orange);
 }
 .btn-primary:hover { background: var(--orange-d); border-color: var(--orange-d); }
@@ -267,7 +294,7 @@ strong { font-weight: 700; }
   gap: 0.5rem;
   font-weight: 700;
   font-size: 0.9375rem;
-  color: var(--orange);
+  color: var(--accent-text);
   text-decoration: none;
   letter-spacing: 0.01em;
 }
@@ -579,14 +606,14 @@ strong { font-weight: 700; }
 }
 .card:hover::before { transform: scaleX(1); }
 .card h3 { margin-bottom: 0.6rem; }
-.card p { color: var(--steel-2); font-size: 0.9375rem; }
+.card p { color: var(--lead-text); font-size: 0.9375rem; }
 
 .card-num {
   font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--orange);
+  color: var(--accent-text);
   display: block;
   margin-bottom: 0.9rem;
 }
@@ -615,7 +642,7 @@ strong { font-weight: 700; }
   margin-bottom: 0.6rem;
 }
 .card-list li:last-child { margin-bottom: 0; }
-.card-list svg { flex: none; color: var(--orange); margin-top: 5px; }
+.card-list svg { flex: none; color: var(--accent-text); margin-top: 5px; }
 
 /* Dark card variant */
 .card-dark {
@@ -644,7 +671,7 @@ strong { font-weight: 700; }
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1;
-  color: var(--paper-2);
+  color: var(--index-num);  /* 3.3:1 on --paper — reads as a section index, not a ghost */
   display: block;
   margin-bottom: 0.5rem;
 }
@@ -669,7 +696,7 @@ strong { font-weight: 700; }
   gap: 0.55rem;
 }
 .svc-item h3 svg { color: var(--orange); flex: none; }
-.svc-item p { font-size: 0.9rem; color: var(--steel-2); margin: 0; }
+.svc-item p { font-size: 0.9rem; color: var(--lead-text); margin: 0; }
 
 /* --- Process ------------------------------------------------------------ */
 .process {
@@ -703,7 +730,7 @@ strong { font-weight: 700; }
   font-size: 3rem;
   font-weight: 800;
   line-height: 1;
-  color: var(--line);
+  color: var(--step-num);
   display: block;
   margin-bottom: 0.75rem;
   transition: color 0.3s var(--ease);
@@ -730,8 +757,7 @@ strong { font-weight: 700; }
   color: var(--orange);
 }
 .value h3 { font-size: 1.25rem; margin-bottom: 0.35rem; }
-.value p { font-size: 0.9375rem; margin: 0; color: var(--steel-2); }
-.dark .value p, .steel .value p { color: var(--smoke); }
+.value p { font-size: 0.9375rem; margin: 0; color: var(--lead-text); }
 
 /* --- Location grid ------------------------------------------------------ */
 .loc-grid {
@@ -772,7 +798,7 @@ strong { font-weight: 700; }
 }
 .loc-name svg { flex: none; opacity: 0; transform: translateX(-6px); transition: all 0.25s var(--ease); }
 .loc:hover .loc-name svg { opacity: 1; transform: translateX(0); }
-.loc-sub { font-size: var(--fs-small); color: var(--smoke); margin: 0; transition: color 0.25s var(--ease); }
+.loc-sub { font-size: var(--fs-small); color: var(--muted-text); margin: 0; transition: color 0.25s var(--ease); }
 
 /* --- Callout / quote ---------------------------------------------------- */
 .callout {
@@ -821,7 +847,7 @@ strong { font-weight: 700; }
 .faq details[open] summary::after { transform: rotate(-135deg) translateY(-3px); }
 .faq summary:hover { color: var(--orange); }
 .faq-body { padding-bottom: 1.5rem; max-width: 70ch; }
-.faq-body p { font-size: 0.9688rem; color: var(--steel-2); }
+.faq-body p { font-size: 0.9688rem; color: var(--lead-text); }
 
 /* --- CTA band ----------------------------------------------------------- */
 .cta-band {
@@ -855,7 +881,7 @@ strong { font-weight: 700; }
   font-size: var(--fs-micro);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--smoke);
+  color: var(--muted-text);
   font-weight: 700;
   margin-bottom: 0.15rem;
 }
@@ -865,7 +891,7 @@ strong { font-weight: 700; }
   font-size: 1.0625rem;
 }
 .contact-detail dd a { text-decoration: none; }
-.contact-detail dd a:hover { color: var(--orange); text-decoration: underline; }
+.contact-detail dd a:hover { color: var(--accent-text); text-decoration: underline; }
 
 .contact-form {
   background: var(--white);
@@ -885,7 +911,7 @@ strong { font-weight: 700; }
   text-transform: uppercase;
   color: var(--steel-2);
 }
-.field .req { color: var(--orange); }
+.field .req { color: var(--orange-ink); }
 
 .field input,
 .field select,
@@ -914,7 +940,7 @@ strong { font-weight: 700; }
   outline: none;
   box-shadow: 0 0 0 3px var(--orange-t);
 }
-.field input::placeholder, .field textarea::placeholder { color: #A9AEB5; }
+.field input::placeholder, .field textarea::placeholder { color: var(--muted); }
 
 /* Honeypot — hidden from humans, visible to naive bots */
 .hp {
@@ -927,7 +953,7 @@ strong { font-weight: 700; }
 .form-footer { margin-top: 1.75rem; }
 .form-note {
   font-size: var(--fs-small);
-  color: var(--smoke);
+  color: var(--muted-text);
   margin: 1rem 0 0;
 }
 .btn-submit { width: 100%; }
