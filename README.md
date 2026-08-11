@@ -49,32 +49,54 @@ assets/img/             Logo, favicons, social share image
 tools/                  Optional generators (see below)
 ```
 
-Pages use **root-absolute paths** (`/assets/css/style.css`), so the site must be
-served from a domain root — which is what a custom domain gives you. If you ever
-host it at `username.github.io/repo/` instead, those paths need a prefix.
+Asset paths and internal links are **relative**, so the same files work at a
+domain root, at a subdirectory, and from the filesystem. `tools/relativize.py`
+enforces this and is safe to re-run at any time.
 
 ---
 
-## Deploying to GitHub Pages
+## Hosting
 
-1. Create a repo and push these files to the default branch.
-2. **Settings → Pages → Source:** Deploy from a branch → `main` → `/ (root)`.
-3. **Settings → Pages → Custom domain:** enter `www.topreno.co`.
-   The included `CNAME` file already declares this.
-4. At your DNS provider, point the domain at GitHub Pages:
+**Deployed:** <https://jchad086.github.io/topreno/>
+Repo `jchad086/topreno`, GitHub Pages serving `main` at `/`.
 
-   | Type  | Name | Value |
-   |-------|------|-------|
-   | CNAME | `www` | `<your-github-username>.github.io` |
+That URL is a **live staging copy**. The custom domain is deliberately not set
+yet, because attaching it would make GitHub redirect this URL to
+`www.topreno.co` — which still points at Duda — leaving nothing to preview.
+Check the staging copy first, then cut over.
+
+### Cutting over to www.topreno.co
+
+1. **Point DNS at GitHub Pages** (at whoever hosts topreno.co's DNS):
+
+   | Type  | Name  | Value |
+   |-------|-------|-------|
+   | CNAME | `www` | `jchad086.github.io` |
    | A     | `@`   | `185.199.108.153` |
    | A     | `@`   | `185.199.109.153` |
    | A     | `@`   | `185.199.110.153` |
    | A     | `@`   | `185.199.111.153` |
 
-   The four `A` records make the bare `topreno.co` redirect to the `www` version.
-5. Tick **Enforce HTTPS** once the certificate is issued (usually a few minutes).
+   The four `A` records make the bare `topreno.co` resolve to the `www` version.
+   Removing the existing Duda records is what takes the old site down.
 
-Do not cancel Duda until DNS has propagated and the new site resolves.
+2. **Attach the domain** — Settings → Pages → Custom domain → `www.topreno.co`,
+   or:
+
+   ```bash
+   gh api -X PUT repos/jchad086/topreno/pages -f cname=www.topreno.co
+   ```
+
+   This writes a `CNAME` file into the repo automatically.
+
+3. **Wait for the certificate**, then tick **Enforce HTTPS**. Usually minutes,
+   occasionally up to an hour.
+
+4. **Send one test submission** through the contact form (see above).
+
+5. **Only then cancel Duda.** Keep it running until the new site resolves and
+   the form delivers — DNS changes are not instant and lowering TTL beforehand
+   makes the switch faster to undo if something is wrong.
 
 ### Running locally
 
@@ -82,7 +104,8 @@ Do not cancel Duda until DNS has propagated and the new site resolves.
 python3 -m http.server 8765
 ```
 
-Then open <http://localhost:8765>. Any static file server works.
+Then open <http://localhost:8765>. Any static file server works — asset paths are
+relative, so the site also runs correctly from a subdirectory.
 
 ---
 
